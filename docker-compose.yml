@@ -1,40 +1,45 @@
 version: '3.8'
 
 services:
-  # 1. PHP / Laravel App Service
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: laravel-app
+    container_name: recura-app
     restart: always
     working_dir: /var/www
     volumes:
-      - ./src:/var/www
+      - .:/var/www
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: recura_db
+      DB_USERNAME: recura_user
+      DB_PASSWORD: recura_password
+    depends_on:
+      - db
 
-  # 2. Nginx Web Server
   web:
     image: nginx:alpine
-    container_name: laravel-web
+    container_name: recura-web
     restart: always
     ports:
       - "8080:80"
     volumes:
-      - ./src:/var/www
+      - .:/var/www
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app
 
-  # 3. MySQL Database
   db:
     image: mysql:8.0
-    container_name: laravel-db
+    container_name: recura-db
     restart: always
     environment:
-      MYSQL_DATABASE: laravel_db
+      MYSQL_DATABASE: recura_db
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_PASSWORD: user_password
-      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: recura_password
+      MYSQL_USER: recura_user
     ports:
       - "3306:3306"
     volumes:
