@@ -7,10 +7,10 @@ services:
       dockerfile: Dockerfile
     container_name: recura-app
     restart: always
-    working_dir: /var/www
+    working_dir: /var/www/src
     volumes:
-      - .:/var/www
-      - storage_data:/var/www/storage/app/public # persistent storage volume
+      - ./src:/var/www/src
+      - storage_data:/var/www/src/storage/app/public
     environment:
       DB_HOST: db
       DB_PORT: 3306
@@ -27,8 +27,8 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - .:/var/www
-      - storage_data:/var/www/storage/app/public # web server bhi volume access karega
+      - ./src:/var/www/src
+      - storage_data:/var/www/src/storage/app/public # web server bhi volume access karega
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app

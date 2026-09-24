@@ -16,12 +16,13 @@ RUN apk add --no-cache \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www
+WORKDIR /var/www/src
 
 COPY . .
 
 # Install NPM dependencies & Build Vue assets
-RUN cd src && npm install && npm run build
+RUN npm install
+RUN npm run build
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
