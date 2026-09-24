@@ -21,8 +21,7 @@ WORKDIR /var/www
 COPY . .
 
 # Install NPM dependencies & Build Vue assets
-RUN npm install
-RUN npm run build
+RUN cd src && npm install && npm run build
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh

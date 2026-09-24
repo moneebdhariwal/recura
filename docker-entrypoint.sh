@@ -1,4 +1,3 @@
-cat << 'EOF' > docker-entrypoint.sh
 #!/bin/sh
 set -e
 
@@ -11,12 +10,11 @@ if [ ! -f .env ]; then
     php artisan key:generate
 fi
 
+echo "Creating Storage Link..."
+php artisan storage:link --force
+
 echo "Running Database Migrations..."
-# DB container ke ready hone ka thoda wait
 sleep 10
 php artisan migrate --force
 
 exec "$@"
-EOF
-
-chmod +x docker-entrypoint.sh
