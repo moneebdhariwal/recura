@@ -1,8 +1,13 @@
 FROM php:8.2-fpm-alpine
 
-# Install system dependencies & PHP extensions
+# Install system dependencies, Node.js, npm, & PHP extensions
 RUN apk add --no-cache \
     zip \
+    unzip \
+    git \
+    curl \
+    nodejs \
+    npm \
     libpng-dev \
     libxml2-dev \
     oniguruma-dev \
@@ -12,3 +17,16 @@ RUN apk add --no-cache \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
+
+COPY . .
+
+# Install NPM dependencies & Build Vue assets
+RUN npm install
+RUN npm run build
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["php-fpm"]
