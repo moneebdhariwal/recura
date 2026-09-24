@@ -11,18 +11,21 @@ RUN apk add --no-cache \
     libpng-dev \
     libxml2-dev \
     oniguruma-dev \
-    && docker-php-ext-install pdo_mysql mbstring gd xml
+    libzip-dev \
+    && docker-php-ext-install pdo_mysql mbstring gd xml exif zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/src
 
-COPY . .
+COPY src/ .
 
 # Install NPM dependencies & Build Vue assets
 RUN npm install
 RUN npm run build
+
+RUN composer config --global policy.advisories.block false
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
