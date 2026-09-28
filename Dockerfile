@@ -21,15 +21,20 @@ WORKDIR /var/www/src
 
 COPY src/ .
 
-# Install NPM dependencies & Build Vue assets
 RUN npm install
 RUN npm run build
 
 RUN composer config --global policy.advisories.block false
 
+RUN chown -R www-data:www-data /var/www/src
+RUN chmod -R 775 /var/www/src/storage /var/www/src/bootstrap/cache /var/www/src/database
+RUN touch /var/www/src/database/database.sqlite && chown www-data:www-data /var/www/src/database/database.sqlite && chmod 775 /var/www/src/database/database.sqlite
+
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+RUN sed -i 's/listen = 127.0.0.1:9000/listen = 9000/g' /usr/local/etc/php-fpm.d/www.conf
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["php-fpm"]
