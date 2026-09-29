@@ -1,14 +1,5 @@
 #!/bin/sh
 
-echo "Running Composer Install..."
-composer install --no-interaction --prefer-dist --optimize-autoloader
-
-echo "Running NPM Install..."
-npm install
-
-echo "Building NPM assets..."
-npm run build
-
 echo "Setting permissions..."
 chown -R www-data:www-data /var/www/src/storage /var/www/src/bootstrap/cache 2>/dev/null || true
 chmod -R 775 /var/www/src/storage /var/www/src/bootstrap/cache

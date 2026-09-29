@@ -1,36 +1,44 @@
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY src/package*.json ./
+
+RUN npm ci --only=production || npm install
+
+COPY src/ .
+
+RUN npm run build
+
+
 FROM php:8.2-fpm-alpine
 
-# Install system dependencies, Node.js, npm, & PHP extensions
 RUN apk add --no-cache \
     zip \
     unzip \
     git \
     curl \
-    nodejs \
-    npm \
     libpng-dev \
     libxml2-dev \
     oniguruma-dev \
     libzip-dev \
     && docker-php-ext-install pdo_mysql mbstring gd xml exif zip
 
-# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/src
 
 COPY src/ .
 
-RUN npm install
-RUN npm run build
+COPY --from=builder /app/public/build ./public/build
 
 RUN composer config --global policy.advisories.block false
+RUN composer install --no-dev --prefer-dist --optimize-autoloader
 
 RUN chown -R www-data:www-data /var/www/src
 RUN chmod -R 775 /var/www/src/storage /var/www/src/bootstrap/cache /var/www/src/database
 RUN touch /var/www/src/database/database.sqlite && chown www-data:www-data /var/www/src/database/database.sqlite && chmod 775 /var/www/src/database/database.sqlite
 
-# Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
