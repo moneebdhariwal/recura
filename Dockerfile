@@ -11,7 +11,7 @@ COPY src/ .
 RUN npm run build
 
 
-FROM php:8.2-fpm-alpine
+FROM php:8.2-fpm-alpine AS php-fpm
 
 RUN apk add --no-cache \
     zip \
@@ -47,3 +47,18 @@ RUN sed -i 's/listen = 127.0.0.1:9000/listen = 9000/g' /usr/local/etc/php-fpm.d/
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["php-fpm"]
+
+
+FROM nginx:alpine AS nginx
+
+RUN apk add --no-cache curl
+
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+
+COPY --from=php-fpm /var/www/src /var/www/src
+
+RUN chown -R nginx:nginx /var/www/src/storage /var/www/src/bootstrap/cache
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
