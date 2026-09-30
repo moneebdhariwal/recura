@@ -9,9 +9,10 @@ services:
     restart: unless-stopped
     working_dir: /var/www/src
     volumes:
+      - ./src/.env:/var/www/src/.env
       - storage_data:/var/www/src/storage/app/public
     env_file:
-      - .env
+      - src/.env
     depends_on:
       db:
         condition: service_healthy
@@ -63,7 +64,7 @@ services:
     container_name: recura-db
     restart: unless-stopped
     env_file:
-      - .env
+      - src/.env
     ports:
       - "3306:3306"
     volumes:
