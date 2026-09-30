@@ -11,15 +11,17 @@ services:
     volumes:
       - ./src:/var/www/src
       - storage_data:/var/www/src/storage/app/public
+    env_file:
+      - .env
     environment:
-      APP_ENV: ${APP_ENV}
-      APP_DEBUG: ${APP_DEBUG}
-      DB_CONNECTION: ${DB_CONNECTION}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_DATABASE: ${DB_DATABASE}
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
+      APP_ENV: ${APP_ENV:-production}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      DB_CONNECTION: ${DB_CONNECTION:-mysql}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_DATABASE: ${DB_DATABASE:-recura_db}
+      DB_USERNAME: ${DB_USERNAME:-recura_user}
+      DB_PASSWORD: ${DB_PASSWORD:-recura_password}
     depends_on:
       db:
         condition: service_healthy
@@ -70,11 +72,8 @@ services:
     image: mysql:8.0
     container_name: recura-db
     restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
+    env_file:
+      - .env
     ports:
       - "3306:3306"
     volumes:
