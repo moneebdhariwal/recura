@@ -9,19 +9,9 @@ services:
     restart: unless-stopped
     working_dir: /var/www/src
     volumes:
-      - ./src:/var/www/src
       - storage_data:/var/www/src/storage/app/public
     env_file:
       - .env
-    environment:
-      APP_ENV: ${APP_ENV:-production}
-      APP_DEBUG: ${APP_DEBUG:-false}
-      DB_CONNECTION: ${DB_CONNECTION:-mysql}
-      DB_HOST: ${DB_HOST:-db}
-      DB_PORT: ${DB_PORT:-3306}
-      DB_DATABASE: ${DB_DATABASE:-recura_db}
-      DB_USERNAME: ${DB_USERNAME:-recura_user}
-      DB_PASSWORD: ${DB_PASSWORD:-recura_password}
     depends_on:
       db:
         condition: service_healthy
