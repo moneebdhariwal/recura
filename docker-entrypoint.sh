@@ -1,17 +1,17 @@
 #!/bin/sh
 
 echo "Setting permissions..."
-chown -R www-data:www-data /var/www/src/storage /var/www/src/bootstrap/cache 2>/dev/null || true
+chown -R www-data:www-data /var/www/src/storage /var/www/src/bootstrap/cache
 chmod -R 775 /var/www/src/storage /var/www/src/bootstrap/cache
 
 if [ ! -f /var/www/src/database/database.sqlite ]; then
     echo "Creating SQLite database..."
     touch /var/www/src/database/database.sqlite
-    chown www-data:www-data /var/www/src/database/database.sqlite 2>/dev/null || true
+    chown www-data:www-data /var/www/src/database/database.sqlite
     chmod 775 /var/www/src/database/database.sqlite
 fi
 
-chown -R www-data:www-data /var/www/src/database 2>/dev/null || true
+chown -R www-data:www-data /var/www/src/database
 chmod -R 775 /var/www/src/database
 
 echo "Generating application key..."

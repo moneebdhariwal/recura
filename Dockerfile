@@ -35,9 +35,10 @@ COPY --from=builder /app/public/build ./public/build
 RUN composer config --global policy.advisories.block false
 RUN composer install --no-dev --prefer-dist --optimize-autoloader
 
-RUN chown -R www-data:www-data /var/www/src
-RUN chmod -R 775 /var/www/src/storage /var/www/src/bootstrap/cache /var/www/src/database
-RUN touch /var/www/src/database/database.sqlite && chown www-data:www-data /var/www/src/database/database.sqlite && chmod 775 /var/www/src/database/database.sqlite
+RUN mkdir -p /var/www/src/storage/logs /var/www/src/storage/framework/sessions /var/www/src/storage/framework/views /var/www/src/storage/framework/cache \
+    && chown -R www-data:www-data /var/www/src/storage /var/www/src/bootstrap/cache /var/www/src/database \
+    && chmod -R 775 /var/www/src/storage /var/www/src/bootstrap/cache /var/www/src/database \
+    && touch /var/www/src/database/database.sqlite && chown www-data:www-data /var/www/src/database/database.sqlite && chmod 775 /var/www/src/database/database.sqlite
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
